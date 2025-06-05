@@ -23,12 +23,6 @@ export class AppLayout extends LitElement {
       width: 100%;
       box-sizing: border-box;
     }
-    
-    @media (max-width: var(--bs-breakpoint-md)) {
-      main {
-        padding: 8px;
-      }
-    }
   `;
 
   firstUpdated() {

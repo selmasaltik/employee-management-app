@@ -2,23 +2,12 @@ import { LitElement, html, css } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { generateEmployees } from '../utils/employeeGenerator.js';
 import '../components/confirmation-modal.js';
+import { msg } from '../localization.js';
 
 const SORT_DIRECTION = {
   ASC: 'asc',
   DESC: 'desc'
 };
-
-const TABLE_COLUMNS = [
-  { key: 'firstName', label: 'First Name', sortable: true },
-  { key: 'lastName', label: 'Last Name', sortable: true },
-  { key: 'doe', label: 'Date of Employment', sortable: true },
-  { key: 'dob', label: 'Date of Birth', sortable: true },
-  { key: 'phone', label: 'Phone', sortable: false },
-  { key: 'email', label: 'Email', sortable: true },
-  { key: 'department', label: 'Department', sortable: true },
-  { key: 'position', label: 'Position', sortable: true },
-  { key: 'actions', label: 'Actions', sortable: false }
-];
 
 export class EmployeeList extends LitElement {
   static properties = {
@@ -32,7 +21,8 @@ export class EmployeeList extends LitElement {
     totalPages: { type: Number },
     showDeleteModal: { type: Boolean, state: true },
     employeeToDelete: { type: Object, state: true },
-    isDeleting: { type: Boolean, state: true }
+    isDeleting: { type: Boolean, state: true },
+    _tableColumns: { state: true }
   };
 
   constructor() {
@@ -49,8 +39,9 @@ export class EmployeeList extends LitElement {
     this.showDeleteModal = false;
     this.employeeToDelete = null;
     this.isDeleting = false;
-    
+    this._boundLocaleChange = this._handleLocaleChange.bind(this);
     this.handleUpdateEmployee = this.handleUpdateEmployee.bind(this);
+    this._updateTableColumns();
   }
 
   firstUpdated() {
@@ -65,10 +56,12 @@ export class EmployeeList extends LitElement {
     window.removeEventListener('popstate', this.handlePopState);
     window.removeEventListener('add-employee', this.handleAddEmployee);
     window.removeEventListener('update-employee', this.handleUpdateEmployee);
+    window.removeEventListener('locale-changed', this._boundLocaleChange);
     
     window.addEventListener('popstate', this.handlePopState);
     window.addEventListener('add-employee', this.handleAddEmployee);
     window.addEventListener('update-employee', this.handleUpdateEmployee);
+    window.addEventListener('locale-changed', this._boundLocaleChange);
     
     this.addEventListener('add-employee', this.handleAddEmployee);
     this.addEventListener('update-employee', this.handleUpdateEmployee);
@@ -78,11 +71,31 @@ export class EmployeeList extends LitElement {
     window.removeEventListener('popstate', this.handlePopState);
     window.removeEventListener('add-employee', this.handleAddEmployee);
     window.removeEventListener('update-employee', this.handleUpdateEmployee);
+    window.removeEventListener('locale-changed', this._boundLocaleChange);
     
     this.removeEventListener('add-employee', this.handleAddEmployee);
     this.removeEventListener('update-employee', this.handleUpdateEmployee);
     
     super.disconnectedCallback();
+  }
+  
+  _updateTableColumns() {
+    this._tableColumns = [
+      { key: 'firstName', label: msg('First Name'), sortable: true },
+      { key: 'lastName', label: msg('Last Name'), sortable: true },
+      { key: 'doe', label: msg('Date of Employment'), sortable: true },
+      { key: 'dob', label: msg('Date of Birth'), sortable: true },
+      { key: 'phone', label: msg('Phone'), sortable: false },
+      { key: 'email', label: msg('Email'), sortable: true },
+      { key: 'department', label: msg('Department'), sortable: true },
+      { key: 'position', label: msg('Position'), sortable: true },
+      { key: 'actions', label: msg('Actions'), sortable: false }
+    ];
+  }
+
+  _handleLocaleChange() {
+    this._updateTableColumns();
+    this.requestUpdate();
   }
 
   static styles = css`
@@ -240,7 +253,6 @@ export class EmployeeList extends LitElement {
     }
 
     .list-item strong {
-      min-width: 160px;
       color: var(--primary-color);
       font-weight: 600;
       margin-right: 8px;
@@ -342,57 +354,6 @@ export class EmployeeList extends LitElement {
       opacity: 0.5;
       cursor: not-allowed;
     }
-
-    @media (max-width: var(--bs-breakpoint-md)) {
-      :host {
-        padding: 0;
-      }
-
-      .list-container {
-        border-radius: 0;
-        box-shadow: none;
-      }
-
-      header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 16px;
-        padding: 16px;
-      }
-
-      .header-actions {
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .search-container {
-        max-width: 100%;
-      }
-
-      .view-toggle {
-        align-self: flex-start;
-      }
-
-      .table-container {
-        border-radius: 0;
-      }
-
-      th, td {
-        padding: 12px 8px;
-      }
-    }
-
-    @media (max-width: var(--bs-breakpoint-sm)) {
-      .list-item > div {
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .list-item strong {
-        min-width: 100%;
-        margin-bottom: 4px;
-      }
-    }
   `;
 
   loadEmployees() {
@@ -407,22 +368,55 @@ export class EmployeeList extends LitElement {
     return [...employees].sort((a, b) => {
       let valueA = a[this.sortField];
       let valueB = b[this.sortField];
-
-      if (this.sortField === 'doe' || this.sortField === 'dob') {
-        valueA = new Date(valueA).getTime();
-        valueB = new Date(valueB).getTime();
-      } else if (typeof valueA === 'string') {
-        valueA = valueA.toLowerCase();
-        valueB = valueB.toLowerCase();
-      }
-
-      if (valueA < valueB) {
-        return this.sortDirection === SORT_DIRECTION.ASC ? -1 : 1;
-      }
-      if (valueA > valueB) {
+      
+      if (valueA === null || valueA === undefined) {
         return this.sortDirection === SORT_DIRECTION.ASC ? 1 : -1;
       }
-      return 0;
+      if (valueB === null || valueB === undefined) {
+        return this.sortDirection === SORT_DIRECTION.ASC ? -1 : 1;
+      }
+      
+      if (typeof valueA === 'string') {
+        valueA = valueA.trim().toLowerCase();
+        valueB = typeof valueB === 'string' ? valueB.trim().toLowerCase() : String(valueB).toLowerCase();
+      } else if (typeof valueB === 'string') {
+        valueA = String(valueA).toLowerCase();
+        valueB = valueB.trim().toLowerCase();
+      }
+      
+      if (this.sortField === 'doe' || this.sortField === 'dob') {
+        const dateA = new Date(valueA).getTime();
+        const dateB = new Date(valueB).getTime();
+        
+        if (isNaN(dateA) || isNaN(dateB)) {
+          if (isNaN(dateA) && !isNaN(dateB)) return 1;
+          if (!isNaN(dateA) && isNaN(dateB)) return -1;
+          return 0;
+        }
+        
+        return this.sortDirection === SORT_DIRECTION.ASC 
+          ? dateA - dateB 
+          : dateB - dateA;
+      }
+
+      if (typeof valueA === 'number' && typeof valueB === 'number') {
+        return this.sortDirection === SORT_DIRECTION.ASC 
+          ? valueA - valueB 
+          : valueB - valueA;
+      }
+      
+      const options = { sensitivity: 'base', numeric: true };
+      let comparison;
+      
+      try {
+        comparison = String(valueA).localeCompare(String(valueB), undefined, options);
+      } catch (e) {
+        const strA = String(valueA);
+        const strB = String(valueB);
+        comparison = strA < strB ? -1 : (strA > strB ? 1 : 0);
+      }
+      
+      return this.sortDirection === SORT_DIRECTION.ASC ? comparison : -comparison;
     });
   }
 
@@ -470,22 +464,22 @@ export class EmployeeList extends LitElement {
       <div class="list-container">
         <header>
           <div class="header-main">
-            <h2>Employee List</h2>
+            <h2>${msg('Employee List')}</h2>
             <div class="header-actions">
               <div class="view-toggle">
                 <button
                   @click=${() => this.changeView('table')}
                   ?selected=${this.viewMode === 'table'}
-                  aria-label="Table View"
+                  aria-label=${msg('Table View')}
                 >
-                  <img class="view-icon" src="dist/assets/table.png" alt="Table View" />
+                  <img class="view-icon" src="dist/assets/table.png" alt=${msg('Table View')} />
                 </button>
                 <button
                   @click=${() => this.changeView('list')}
                   ?selected=${this.viewMode === 'list'}
-                  aria-label="List View"
+                  aria-label=${msg('List View')}
                 >
-                  <img class="view-icon" src="dist/assets/list.png" alt="List View" />
+                  <img class="view-icon" src="dist/assets/list.png" alt=${msg('List View')} />
                 </button>
               </div>
             </div>
@@ -493,7 +487,7 @@ export class EmployeeList extends LitElement {
           <div class="search-container">
             <input
               type="search"
-              placeholder="Search by name or email"
+              placeholder="${msg('Search by name or email')}"
               @input=${this.onSearchInput}
               .value=${this.searchTerm}
             />
@@ -506,10 +500,14 @@ export class EmployeeList extends LitElement {
 
         <confirmation-modal
           id="deleteModal"
-          title="Are you sure?"
-          message="${this.employeeToDelete ? `Selected Employee record of ${this.employeeToDelete.firstName} ${this.employeeToDelete.lastName} will be deleted.` : 'Are you sure you want to delete this employee? This action cannot be undone.'}"
-          confirmText="Proceed"
-          cancelText="Cancel"
+          title="${msg('Are you sure?')}"
+          .message=${this.employeeToDelete ? 
+            msg('Selected Employee record of {0} {1} will be deleted.')
+              .replace('{0}', this.employeeToDelete.firstName || '')
+              .replace('{1}', this.employeeToDelete.lastName || '') : 
+            msg('Are you sure you want to delete this employee? This action cannot be undone.')}
+          confirmText="${msg('Proceed')}"
+          cancelText="${msg('Cancel')}"
           ?open=${this.showDeleteModal}
           @confirm=${this.confirmDelete}
           @close=${this.closeDeleteModal}
@@ -527,16 +525,16 @@ export class EmployeeList extends LitElement {
         <button 
           @click=${() => this.handlePageChange(1)} 
           ?disabled=${this.currentPage === 1}
-          aria-label="First page"
+          aria-label=${msg('First page')}
         >
-          <img class="pagination-icon" src="dist/assets/double-left-arrow.png" alt="Double Left Arrow" />
+          <img class="pagination-icon" src="dist/assets/double-left-arrow.png" alt=${msg('First page')} />
         </button>
         <button 
           @click=${() => this.handlePageChange(Math.max(1, this.currentPage - 1))}
           ?disabled=${this.currentPage === 1}
-          aria-label="Previous page"
+          aria-label=${msg('Previous page')}
         >
-          <img class="pagination-icon" src="dist/assets/left-arrow.png" alt="Left Arrow" />
+          <img class="pagination-icon" src="dist/assets/left-arrow.png" alt=${msg('Previous page')} />
         </button>
         
         ${Array.from({ length: Math.min(5, this.totalPages) }, (_, i) => {
@@ -553,7 +551,7 @@ export class EmployeeList extends LitElement {
           return html`
             <button 
               @click=${() => this.handlePageChange(pageNum)}
-              aria-label="Page ${pageNum}"
+              aria-label=${msg('Page {0}', [pageNum])}
               class="${this.currentPage === pageNum ? 'active' : ''}"
               aria-current=${ifDefined(this.currentPage === pageNum ? 'page' : undefined)}
             >
@@ -565,16 +563,16 @@ export class EmployeeList extends LitElement {
         <button 
           @click=${() => this.handlePageChange(Math.min(this.totalPages, this.currentPage + 1))}
           ?disabled=${this.currentPage === this.totalPages}
-          aria-label="Next page"
+          aria-label=${msg('Next page')}
         >
-          <img class="pagination-icon" src="dist/assets/right-arrow.png" alt="Right Arrow" />
+          <img class="pagination-icon" src="dist/assets/right-arrow.png" alt=${msg('Next page')} />
         </button>
         <button 
           @click=${() => this.handlePageChange(this.totalPages)}
           ?disabled=${this.currentPage === this.totalPages}
-          aria-label="Last page"
+          aria-label=${msg('Last page')}
         >
-          <img class="pagination-icon" src="dist/assets/double-right-arrow.png" alt="Double Right Arrow" />
+          <img class="pagination-icon" src="dist/assets/double-right-arrow.png" alt=${msg('Last page')} />
         </button>
       </div>
     `;
@@ -586,7 +584,7 @@ export class EmployeeList extends LitElement {
         <table>
           <thead>
             <tr>
-              ${TABLE_COLUMNS.map(column => html`
+              ${this._tableColumns.map(column => html`
                 <th 
                   @click=${() => column.sortable && this.handleSort(column.key)}
                   class="${column.sortable ? 'sortable' : ''} ${this.sortField === column.key ? 'sorted' : ''}"
@@ -606,9 +604,9 @@ export class EmployeeList extends LitElement {
           <tbody>
             ${paginatedEmployees.length === 0 ? html`
               <tr>
-                <td colspan="${TABLE_COLUMNS.length}" class="empty-state">
-                  <div>No employees found</div>
-                  <p>Try adjusting your search or add a new employee</p>
+                <td colspan="${this._tableColumns.length}" class="empty-state">
+                  <div>${msg('No employees found')}</div>
+                  <p>${msg('Try adjusting your search or add a new employee')}</p>
                 </td>
               </tr>
             ` : paginatedEmployees.map(emp => html`
@@ -626,18 +624,18 @@ export class EmployeeList extends LitElement {
                     e.stopPropagation();
                     this.editEmployee(emp);
                   }}>
-                    <img src="dist/assets/edit.png" alt="Edit" />
+                    <img src="dist/assets/edit.png" alt="${msg('Edit')}" />
                   </button>
                   <button class="delete" @click=${(e) => this.showDeleteConfirmation(emp, e)}>
-                    <img src="dist/assets/delete.png" alt="Delete" />
+                    <img src="dist/assets/delete.png" alt="${msg('Delete')}" />
                   </button>
                 </td>
               </tr>
             `)}
           </tbody>
         </table>
-        ${this.renderPagination()}
       </div>
+      ${this.renderPagination()}
     `;
   }
 
@@ -646,34 +644,34 @@ export class EmployeeList extends LitElement {
       <div class="list-view">
         ${paginatedEmployees.length === 0 ? html`
           <div class="empty-state">
-            <div>No employees found</div>
-            <p>Try adjusting your search or add a new employee</p>
+            <div>${msg('No employees found')}</div>
+            <p>${msg('Try adjusting your search or add a new employee')}</p>
           </div>
         ` : paginatedEmployees.map(emp => html`
           <div class="list-item">
-            <div><strong>First Name:</strong> ${emp.firstName || '-'}</div>
-            <div><strong>Last Name:</strong> ${emp.lastName || '-'}</div>
-            <div><strong>Date of Employment:</strong> ${emp.doe ? new Date(emp.doe).toLocaleDateString() : '-'}</div>
-            <div><strong>Date of Birth:</strong> ${emp.dob ? new Date(emp.dob).toLocaleDateString() : '-'}</div>
-            <div><strong>Phone:</strong> ${emp.phone || '-'}</div>
-            <div><strong>Email:</strong> ${emp.email || '-'}</div>
-            <div><strong>Department:</strong> ${emp.department || '-'}</div>
-            <div><strong>Position:</strong> ${emp.position || '-'}</div>
+            <div><strong>${msg('First Name')}:</strong> ${emp.firstName || '-'}</div>
+            <div><strong>${msg('Last Name')}:</strong> ${emp.lastName || '-'}</div>
+            <div><strong>${msg('Date of Employment')}:</strong> ${emp.doe ? new Date(emp.doe).toLocaleDateString() : '-'}</div>
+            <div><strong>${msg('Date of Birth')}:</strong> ${emp.dob ? new Date(emp.dob).toLocaleDateString() : '-'}</div>
+            <div><strong>${msg('Phone')}:</strong> ${emp.phone || '-'}</div>
+            <div><strong>${msg('Email')}:</strong> ${emp.email || '-'}</div>
+            <div><strong>${msg('Department')}:</strong> ${emp.department || '-'}</div>
+            <div><strong>${msg('Position')}:</strong> ${emp.position || '-'}</div>
             <div class="actions">
               <button class="edit" @click=${(e) => {
                 e.stopPropagation();
                 this.editEmployee(emp);
               }}>
-                <img src="dist/assets/edit.png" alt="Edit" />
+                <img src="dist/assets/edit.png" alt=${msg('Edit')} />
               </button>
               <button class="delete" @click=${(e) => this.showDeleteConfirmation(emp, e)}>
-                <img src="dist/assets/delete.png" alt="Delete" />
+                <img src="dist/assets/delete.png" alt=${msg('Delete')} />
               </button>
             </div>
           </div>
         `)}
-        ${this.renderPagination()}
       </div>
+      ${this.renderPagination()}
     `;
   }
 

@@ -18,6 +18,7 @@ export class EmployeeForm extends LitElement {
     this.employeeId = null;
     this.loading = false;
     this.handleRouteChange = this.handleRouteChange.bind(this);
+    this._handleLocaleChange = this._handleLocaleChange.bind(this);
   }
 
   static styles = css`
@@ -154,54 +155,24 @@ export class EmployeeForm extends LitElement {
       gap: 8px;
       width: 100%;
     }
-
-    @media (max-width: var(--bs-breakpoint-md)) {
-      .form-container {
-        padding: 24px;
-      }
-      
-      .two-columns {
-        grid-template-columns: 1fr;
-        gap: 8px;
-      }
-      
-      .form-actions {
-        flex-direction: column;
-        gap: 12px;
-      }
-      
-      button {
-        width: 100%;
-        margin: 0;
-      }
-    }
-    
-    @media (max-width: var(--bs-breakpoint-sm)) {
-      .form-container {
-        padding: 16px;
-        margin: 8px 0;
-        border-radius: 0;
-        box-shadow: none;
-      }
-    }
   `;
 
   validateField(name, value) {
     const errors = { ...this.formErrors };
     
     if (!value) {
-      errors[name] = 'This field is required';
+      errors[name] = msg('This field is required');
     } else {
       delete errors[name];
       
       if (name === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        errors[name] = 'Please enter a valid email address';
+        errors[name] = msg('Please enter a valid email address');
       }
       
       if (name === 'phone') {
         const digits = value.replace(/\D/g, '');
         if (!/^(5\d{9}|90\d{10})$/.test(digits)) {
-          errors[name] = 'Please enter a valid phone number in format: +(90) 5XX XXX XX XX';
+          errors[name] = msg('Please enter a valid phone number in format: +(90) 5XX XXX XX XX');
         }
       }
       
@@ -209,7 +180,7 @@ export class EmployeeForm extends LitElement {
         const dob = new Date(value);
         const today = new Date();
         if (dob >= today) {
-          errors[name] = 'Date of birth must be in the past';
+          errors[name] = msg('Date of birth must be in the past');
         }
       }
       
@@ -217,7 +188,7 @@ export class EmployeeForm extends LitElement {
         const doe = new Date(value);
         const today = new Date();
         if (doe > today) {
-          errors[name] = 'Date of employment cannot be in the future';
+          errors[name] = msg('Date of employment cannot be in the future');
         }
       }
     }
@@ -319,26 +290,26 @@ export class EmployeeForm extends LitElement {
     maxDob.setFullYear(maxDob.getFullYear() - 18);
     
     if (dobDate >= today) {
-      return 'Date of birth must be in the past';
+      return msg('Date of birth must be in the past');
     }
     
     if (dobDate < minDob) {
-      return 'Employee is too old (max 65 years)';
+      return msg('Employee is too old (max 65 years)');
     }
     
     if (dobDate > maxDob) {
-      return 'Employee must be at least 18 years old';
+      return msg('Employee must be at least 18 years old');
     }
     
     if (doeDate > today) {
-      return 'Date of employment cannot be in the future';
+      return msg('Date of employment cannot be in the future');
     }
     
     const minDoe = new Date(dobDate);
     minDoe.setFullYear(minDoe.getFullYear() + 18);
     
     if (doeDate < minDoe) {
-      return 'Employee must be at least 18 years old at the time of employment';
+      return msg('Employee must be at least 18 years old at the time of employment');
     }
     
     return null;
@@ -365,18 +336,25 @@ export class EmployeeForm extends LitElement {
     
     requiredFields.forEach(field => {
       if (!employeeData[field]?.trim()) {
-        this.formErrors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+        const fieldName = field === 'dob' ? 'Date of Birth' : 
+                          field === 'doe' ? 'Date of Employment' :
+                          field === 'firstName' ? 'First Name' :
+                          field === 'lastName' ? 'Last Name' :
+                          field === 'email' ? 'Email Address' :
+                          field === 'phone' ? 'Phone Number' :
+                          field.charAt(0).toUpperCase() + field.slice(1);
+        this.formErrors[field] = msg('{0} is required').replace('{0}', fieldName);
         isValid = false;
       }
     });
     
     if (employeeData.email && !this.validateEmail(employeeData.email)) {
-      this.formErrors.email = 'Please enter a valid email address';
+      this.formErrors.email = msg('Please enter a valid email address');
       isValid = false;
     }
     
     if (employeeData.phone && !this.validatePhone(employeeData.phone)) {
-      this.formErrors.phone = 'Please enter a valid phone number';
+      this.formErrors.phone = msg('Please enter a valid phone number');
       isValid = false;
     }
     
@@ -547,6 +525,7 @@ export class EmployeeForm extends LitElement {
     this.loading = true;
     this.handleRouteChange();
     window.addEventListener('popstate', this.handleRouteChange);
+    window.addEventListener('locale-changed', this._handleLocaleChange);
     setTimeout(() => {
       this.loading = false;
       this.requestUpdate();
@@ -559,7 +538,12 @@ export class EmployeeForm extends LitElement {
   
   disconnectedCallback() {
     window.removeEventListener('popstate', this.handleRouteChange);
+    window.removeEventListener('locale-changed', this._handleLocaleChange);
     super.disconnectedCallback();
+  }
+  
+  _handleLocaleChange() {
+    this.requestUpdate();
   }
 
   formatDateForInput(dateString) {
@@ -570,14 +554,14 @@ export class EmployeeForm extends LitElement {
 
   getPlaceholder(name) {
     const placeholders = {
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john.doe@sourtimes.org',
-      phone: '+(90) 5__ ___ __ __',
-      department: 'Select department',
-      position: 'Select position',
-      dob: 'YYYY-MM-DD',
-      doe: 'YYYY-MM-DD'
+      firstName: msg('John'),
+      lastName: msg('Doe'),
+      email: msg('john.doe@sourcetimes.org'),
+      phone: msg('+(90) 5__ ___ __ __'),
+      department: msg('Select department'),
+      position: msg('Select position'),
+      dob: msg('YYYY-MM-DD'),
+      doe: msg('YYYY-MM-DD')
     };
     return placeholders[name] || '';
   }
@@ -607,8 +591,9 @@ export class EmployeeForm extends LitElement {
             ?disabled=${this.loading}
             placeholder="+(90) 5__ ___ __ __"
             pattern="^\\+90\\d{10}$"
-            title="Please enter a valid phone number in format: +(90) 5XX XXX XX XX"
+            title=${msg('Please enter a valid phone number in format: +(90) 5XX XXX XX XX')}
             inputmode="numeric"
+            placeholder=${placeholder}
           />
           ${error ? html`<span class="error">${error}</span>` : ''}
         </div>
@@ -628,7 +613,7 @@ export class EmployeeForm extends LitElement {
                 class=${error ? 'error-border' : ''}
                 ?disabled=${this.loading}
               >
-                <option value="" ?selected=${!value} disabled>Select ${label}</option>
+                <option value="" ?selected=${!value} disabled>${msg('Select')} ${label}</option>
                 ${options.map(option => 
                   html`<option 
                     value=${option} 
@@ -660,14 +645,22 @@ export class EmployeeForm extends LitElement {
   }
 
   render() {
-    const departments = ['Analytics', 'Tech'];
-    const positions = ['Junior', 'Medior', 'Senior'];
+    const departments = [
+      msg('Analytics'),
+      msg('Tech')
+    ];
+    
+    const positions = [
+      msg('Junior'),
+      msg('Medior'),
+      msg('Senior')
+    ];
     
     if (this.loading) {
       return html`
         <div class="form-container" style="text-align: center; padding: 40px;">
-          <div style="font-size: 18px; margin-bottom: 16px;">Loading employee data...</div>
-          <div style="color: #666;">Please wait while we load the employee information.</div>
+          <div style="font-size: 18px; margin-bottom: 16px;">${msg('Loading employee data...')}</div>
+          <div style="color: #666;">${msg('Please wait while we load the employee information.')}</div>
         </div>
       `;
     }
@@ -675,26 +668,26 @@ export class EmployeeForm extends LitElement {
     return html`
       <div class="form-container">
         <h1 class="form-title">
-          ${this.isEditMode ? 'Edit Employee' : 'Add New Employee'}
+          ${this.isEditMode ? msg('Edit Employee') : msg('Add New Employee')}
         </h1>
         
         <form @submit=${this.handleSubmit} @reset=${() => this.formErrors = {}}>
           <div class="two-columns">
-            ${this.renderFormField('First Name', 'firstName', 'text', true, '', this.employee?.firstName || '')}
-            ${this.renderFormField('Last Name', 'lastName', 'text', true, '', this.employee?.lastName || '')}
+            ${this.renderFormField(msg('First Name'), 'firstName', 'text', true, '', this.employee?.firstName || '')}
+            ${this.renderFormField(msg('Last Name'), 'lastName', 'text', true, '', this.employee?.lastName || '')}
           </div>
           
           <div class="two-columns">
-            ${this.renderFormField('Date of Birth', 'dob', 'date', true, '', this.employee?.dob || '')}
-            ${this.renderFormField('Date of Employment', 'doe', 'date', true, '', this.employee?.doe || '')}
+            ${this.renderFormField(msg('Date of Birth'), 'dob', 'date', true, '', this.employee?.dob || '')}
+            ${this.renderFormField(msg('Date of Employment'), 'doe', 'date', true, '', this.employee?.doe || '')}
           </div>
           
-          ${this.renderFormField('Email Address', 'email', 'email', true, '', this.employee?.email || '')}
-          ${this.renderFormField('Phone Number', 'phone', 'tel', true, '', this.employee?.phone || '')}
+          ${this.renderFormField(msg('Email Address'), 'email', 'email', true, '', this.employee?.email || '')}
+          ${this.renderFormField(msg('Phone Number'), 'phone', 'tel', true, '', this.employee?.phone || '')}
           
           <div class="two-columns">
-            ${this.renderFormField('Department', 'department', 'select', true, departments, this.employee?.department || '')}
-            ${this.renderFormField('Position', 'position', 'select', true, positions, this.employee?.position || '')}
+            ${this.renderFormField(msg('Department'), 'department', 'select', true, departments, this.employee?.department || '')}
+            ${this.renderFormField(msg('Position'), 'position', 'select', true, positions, this.employee?.position || '')}
           </div>
           
           <div class="form-actions">

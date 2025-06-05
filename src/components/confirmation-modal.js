@@ -1,5 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
+import { msg } from '../localization.js';
 
 export class ConfirmationModal extends LitElement {
   static properties = {
@@ -8,8 +9,23 @@ export class ConfirmationModal extends LitElement {
     message: { type: String },
     confirmText: { type: String },
     cancelText: { type: String },
-    loading: { type: Boolean }, 
+    loading: { type: Boolean },
+    _localizedTitle: { state: true },
+    _localizedMessage: { state: true },
+    _localizedConfirmText: { state: true },
+    _localizedCancelText: { state: true }
   };
+
+  constructor() {
+    super();
+    this.open = false;
+    this.title = 'Are you sure?';
+    this.message = 'This action cannot be undone.';
+    this.confirmText = 'Confirm';
+    this.cancelText = 'Cancel';
+    this.loading = false;
+    this._boundLocaleChange = this._handleLocaleChange.bind(this);
+  }
 
   static styles = css`
     .modal-overlay {
@@ -118,20 +134,47 @@ export class ConfirmationModal extends LitElement {
     }
   `;
 
-  constructor() {
-    super();
-    this.open = false;
-    this.title = 'Are you sure?';
-    this.message = 'This action cannot be undone.';
-    this.confirmText = 'Confirm';
-    this.cancelText = 'Cancel';
-    this.loading = false;
+  connectedCallback() {
+    super.connectedCallback();
+    this._updateLocalizedStrings();
+    window.addEventListener('locale-changed', this._boundLocaleChange);
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener('locale-changed', this._boundLocaleChange);
+    super.disconnectedCallback();
+  }
+
+  _handleLocaleChange() {
+    this._updateLocalizedStrings();
+  }
+
+  _updateLocalizedStrings() {
+    this._localizedTitle = this.title ? msg(this.title) : '';
+    this._localizedMessage = this.message ? msg(this.message) : '';
+    this._localizedConfirmText = this.confirmText ? msg(this.confirmText) : msg('Yes');
+    this._localizedCancelText = this.cancelText ? msg(this.cancelText) : msg('No');
+    this.requestUpdate();
+  }
+
+  updated(changedProperties) {
+    if (changedProperties.has('title') || 
+        changedProperties.has('message') || 
+        changedProperties.has('confirmText') || 
+        changedProperties.has('cancelText')) {
+      this._updateLocalizedStrings();
+    }
   }
 
   render() {
+    const classes = {
+      'modal-overlay': true,
+      'open': this.open
+    };
+
     return html`
-      <div
-        class="modal-overlay ${classMap({ open: this.open })}"
+      <div 
+        class=${classMap(classes)} 
         @click=${this._handleOverlayClick}
         role="dialog"
         aria-modal="true"
@@ -140,33 +183,33 @@ export class ConfirmationModal extends LitElement {
       >
         <div class="modal" @click=${e => e.stopPropagation()}>
           <div class="modal-header">
-            <h3 id="modal-title" class="modal-title">${this.title}</h3>
-            <button
-              class="close-button"
+            <h2 id="modal-title" class="modal-title">${this._localizedTitle}</h2>
+            <button 
+              class="close-button" 
               @click=${this._handleCancel}
-              aria-label="Close modal"
               ?disabled=${this.loading}
+              aria-label=${msg('Close')}
             >
               &times;
             </button>
           </div>
           <div class="modal-body">
-            <p id="modal-message">${this.message}</p>
+            <p id="modal-message">${this._localizedMessage}</p>
           </div>
           <div class="modal-footer">
-            <button
-              class="btn btn-confirm"
+            <button 
+              class="btn btn-confirm" 
               @click=${this._handleConfirm}
               ?disabled=${this.loading}
             >
-              ${this.loading ? html`<span>Loading...</span>` : this.confirmText}
+              ${this.loading ? html`<span>${msg('Loading...')}</span>` : this._localizedConfirmText}
             </button>
-            <button
-              class="btn btn-cancel"
+            <button 
+              class="btn btn-cancel" 
               @click=${this._handleCancel}
               ?disabled=${this.loading}
             >
-              ${this.cancelText}
+              ${this._localizedCancelText}
             </button>
           </div>
         </div>

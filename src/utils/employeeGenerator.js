@@ -1,3 +1,5 @@
+import { msg } from '../localization.js';
+
 const firstNames = [
   'James', 'Mary', 'John', 'Patricia', 'Robert', 'Jennifer', 'Michael', 'Linda',
   'William', 'Elizabeth', 'David', 'Barbara', 'Richard', 'Susan', 'Joseph', 'Jessica',
@@ -13,8 +15,8 @@ const lastNames = [
   'Harris', 'Clark', 'Lewis', 'Robinson', 'Walker', 'Perez', 'Hall', 'Young', 'Allen'
 ];
 
-const departments = ['Analytics', 'Tech'];
-const positions = ['Junior', 'Medior', 'Senior'];
+const departments = ['Analytics', 'Tech']
+const positions = ['Junior', 'Medior', 'Senior']
 
 function randomDate(start, end) {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
