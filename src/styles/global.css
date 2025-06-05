@@ -1,0 +1,56 @@
+@font-face {
+  font-family: 'INGMe';
+  src: url('../assets/fonts/INGMeWeb-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'INGMe';
+  src: url('../assets/fonts/INGMeWeb-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+:root {
+  --primary-color: #ff6600;
+  --secondary-color: #f5f5f5;
+  --blue-color: #559BD1;
+  --white-color: #fff;
+  --text-color: #333;
+  --font-family: 'INGMe', sans-serif;
+
+  --bs-breakpoint-xs: 0;
+  --bs-breakpoint-sm: 576px;
+  --bs-breakpoint-md: 768px;
+  --bs-breakpoint-lg: 992px;
+  --bs-breakpoint-xl: 1200px;
+  --bs-breakpoint-xxl: 1400px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  min-height: 100%;
+  font-family: var(--font-family);
+  color: var(--text-color);
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
