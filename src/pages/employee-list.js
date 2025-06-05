@@ -744,6 +744,10 @@ export class EmployeeList extends LitElement {
 
   editEmployee(employee) {
     if (employee && employee.id) {
+      const mainContent = document.querySelector('main');
+      if (mainContent) {
+        mainContent.innerHTML = '';
+      }
       window.history.pushState({}, '', `/employees/edit/${employee.id}`);
       window.dispatchEvent(new CustomEvent('popstate'));
     }
