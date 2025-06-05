@@ -474,14 +474,14 @@ export class EmployeeList extends LitElement {
                   ?selected=${this.viewMode === 'table'}
                   aria-label=${msg('Table View')}
                 >
-                  <img class="view-icon" src="dist/assets/table.png" alt=${msg('Table View')} />
+                  <img class="view-icon" src="/assets/table.png" alt=${msg('Table View')} />
                 </button>
                 <button
                   @click=${() => this.changeView('list')}
                   ?selected=${this.viewMode === 'list'}
                   aria-label=${msg('List View')}
                 >
-                  <img class="view-icon" src="dist/assets/list.png" alt=${msg('List View')} />
+                  <img class="view-icon" src="/assets/list.png" alt=${msg('List View')} />
                 </button>
               </div>
             </div>
@@ -529,14 +529,14 @@ export class EmployeeList extends LitElement {
           ?disabled=${this.currentPage === 1}
           aria-label=${msg('First page')}
         >
-          <img class="pagination-icon" src="dist/assets/double-left-arrow.png" alt=${msg('First page')} />
+          <img class="pagination-icon" src="/assets/double-left-arrow.png" alt=${msg('First page')} />
         </button>
         <button 
           @click=${() => this.handlePageChange(Math.max(1, this.currentPage - 1))}
           ?disabled=${this.currentPage === 1}
           aria-label=${msg('Previous page')}
         >
-          <img class="pagination-icon" src="dist/assets/left-arrow.png" alt=${msg('Previous page')} />
+          <img class="pagination-icon" src="/assets/left-arrow.png" alt=${msg('Previous page')} />
         </button>
         
         ${Array.from({ length: Math.min(5, this.totalPages) }, (_, i) => {
@@ -567,14 +567,14 @@ export class EmployeeList extends LitElement {
           ?disabled=${this.currentPage === this.totalPages}
           aria-label=${msg('Next page')}
         >
-          <img class="pagination-icon" src="dist/assets/right-arrow.png" alt=${msg('Next page')} />
+          <img class="pagination-icon" src="/assets/right-arrow.png" alt=${msg('Next page')} />
         </button>
         <button 
           @click=${() => this.handlePageChange(this.totalPages)}
           ?disabled=${this.currentPage === this.totalPages}
           aria-label=${msg('Last page')}
         >
-          <img class="pagination-icon" src="dist/assets/double-right-arrow.png" alt=${msg('Last page')} />
+          <img class="pagination-icon" src="/assets/double-right-arrow.png" alt=${msg('Last page')} />
         </button>
       </div>
     `;
@@ -597,14 +597,14 @@ export class EmployeeList extends LitElement {
                       ${this.sortField === column.key 
                         ? html`
                             <img 
-                              src="dist/assets/sort-${this.sortDirection === SORT_DIRECTION.ASC ? 'asc' : 'desc'}-arrow.png" 
+                              src="/assets/sort-${this.sortDirection === SORT_DIRECTION.ASC ? 'asc' : 'desc'}-arrow.png" 
                               alt="${this.sortDirection === SORT_DIRECTION.ASC ? 'Sort ascending' : 'Sort descending'}"
                               class="sort-arrow"
                             />
                           `
                         : html`
                             <img 
-                              src="dist/assets/double-sort-arrow.png" 
+                              src="/assets/double-sort-arrow.png" 
                               alt="Sort"
                               class="sort-arrow"
                             />
@@ -639,10 +639,10 @@ export class EmployeeList extends LitElement {
                     e.stopPropagation();
                     this.editEmployee(emp);
                   }}>
-                    <img src="dist/assets/edit.png" alt="${msg('Edit')}" />
+                    <img src="/assets/edit.png" alt="${msg('Edit')}" />
                   </button>
                   <button class="delete" @click=${(e) => this.showDeleteConfirmation(emp, e)}>
-                    <img src="dist/assets/delete.png" alt="${msg('Delete')}" />
+                    <img src="/assets/delete.png" alt="${msg('Delete')}" />
                   </button>
                 </td>
               </tr>
@@ -677,10 +677,10 @@ export class EmployeeList extends LitElement {
                 e.stopPropagation();
                 this.editEmployee(emp);
               }}>
-                <img src="dist/assets/edit.png" alt=${msg('Edit')} />
+                <img src="/assets/edit.png" alt=${msg('Edit')} />
               </button>
               <button class="delete" @click=${(e) => this.showDeleteConfirmation(emp, e)}>
-                <img src="dist/assets/delete.png" alt=${msg('Delete')} />
+                <img src="/assets/delete.png" alt=${msg('Delete')} />
               </button>
             </div>
           </div>

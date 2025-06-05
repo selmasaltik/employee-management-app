@@ -14,7 +14,7 @@ export class AppLayout extends LitElement {
     main {
       flex: 1;
       padding: 16px;
-      background-image: url('dist/assets/lion_bg.png');
+      background-image: url('/assets/lion_bg.png');
       background-repeat: no-repeat;
       background-position: right bottom;
       background-size: auto;

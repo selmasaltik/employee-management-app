@@ -111,18 +111,18 @@ export class HeaderBar extends LitElement {
         <div class="header-container">
           <div class="left">
             <a href="/" @click=${(e) => this.navigateTo('/', e)}>
-              <img class="logo" src="dist/assets/logo.png" alt="${msg('Logo')}" />
+              <img class="logo" src="/assets/logo.png" alt="${msg('Logo')}" />
             </a>
           </div>
           <div class="right">
             <a href="/employees" class="nav-item" 
               @click=${(e) => this.navigateTo('/employees', e)}>
-              <img src="dist/assets/employee.png" alt="${msg('Employees')}" />
+              <img src="/assets/employee.png" alt="${msg('Employees')}" />
               ${msg('Employees')}
             </a>
             <a href="/employees/add" class="nav-item add-button" 
               @click=${(e) => this.navigateTo('/employees/add', e)}>
-              <img src="dist/assets/plus.png" alt="${msg('Add New')}" />
+              <img src="/assets/plus.png" alt="${msg('Add New')}" />
               ${msg('Add New')}
             </a>
             <lang-selector></lang-selector>

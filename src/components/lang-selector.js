@@ -71,7 +71,7 @@ export class LangSelector extends LitElement {
 
   render() {
     const languageName = this.currentLocale === 'en' ? msg('English') : msg('Turkish');
-    const flagSrc = `dist/assets/flag_${this.currentLocale}.png`;
+    const flagSrc = `/assets/flag_${this.currentLocale}.png`;
     
     return html`
       <button 
