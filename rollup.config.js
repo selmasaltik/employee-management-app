@@ -1,19 +1,15 @@
-/**
- * @license
- * Copyright 2018 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
 import summary from 'rollup-plugin-summary';
-import {terser} from 'rollup-plugin-terser';
+import copy from 'rollup-plugin-copy';
+import terser from '@rollup/plugin-terser';
 import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 
 export default {
-  input: 'my-element.js',
+  input: 'main.js',  
   output: {
-    file: 'my-element.bundled.js',
+    dir: 'dist',
     format: 'esm',
+    sourcemap: true,
   },
   onwarn(warning) {
     if (warning.code !== 'THIS_IS_UNDEFINED') {
@@ -21,12 +17,22 @@ export default {
     }
   },
   plugins: [
-    replace({preventAssignment: false, 'Reflect.decorate': 'undefined'}),
+    copy({
+      targets: [
+        { src: 'src/assets/*', dest: 'dist/' }, 
+        { src: 'index.html', dest: 'dist/' },
+        { src: 'favicon.ico', dest: 'dist/' },
+        { src: 'src/styles/global.css', dest: 'dist/' }
+      ],
+      flatten: false,
+      verbose: true, 
+    }),
+    replace({
+      preventAssignment: true,
+      'Reflect.decorate': 'undefined',
+      'process.env.NODE_ENV': JSON.stringify(process.env.MODE || 'development'),
+    }),
     resolve(),
-    /**
-     * This minification setup serves the static site generation.
-     * For bundling and minification, check the README.md file.
-     */
     terser({
       ecma: 2021,
       module: true,
@@ -39,4 +45,8 @@ export default {
     }),
     summary(),
   ],
+  watch: {
+    include: 'src/**',
+    clearScreen: true,
+  },
 };
