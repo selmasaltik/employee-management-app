@@ -28,7 +28,7 @@ export class FooterBar extends LitElement {
       align-items: center;
       padding: 8px 16px;
       background-color: var(--secondary-color);
-      border-top: 1px solid #d1d5db;
+      border-top: 1px solid var(--border-color);
     }
 
     footer {

@@ -8,7 +8,7 @@ export class AppLayout extends LitElement {
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      background-color: #f5f5f5;
+      background-color: var(--secondary-color);
     }
     
     main {
@@ -21,7 +21,6 @@ export class AppLayout extends LitElement {
       max-width: 1400px;
       margin: 0 auto;
       width: 100%;
-      box-sizing: border-box;
     }
   `;
 

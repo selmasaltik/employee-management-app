@@ -27,26 +27,24 @@ export class EmployeeForm extends LitElement {
       width: 100%;
       max-width: 100%;
       padding: 0 16px;
-      box-sizing: border-box;
     }
 
     .form-container {
       max-width: 800px;
       margin: 0 auto;
       padding: 24px 32px;
-      background-color: #fff;
+      background-color: var(--white-color);
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       width: 100%;
-      box-sizing: border-box;
     }
 
     .form-title {
       font-size: 28px;
-      color: var(--text-color);
+      color: var(--primary-text-color);
       margin: 0 0 32px 0;
       padding-bottom: 16px;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid var(--border-color);
       font-weight: 700;
     }
 
@@ -59,13 +57,13 @@ export class EmployeeForm extends LitElement {
       display: block;
       margin-bottom: 16px;
       font-weight: 600;
-      color: var(--text-color);
+      color: var(--primary-text-color);
       font-size: 15px;
     }
 
     label.required::after {
       content: ' *';
-      color: #e53e3e;
+      color: var(--error-color);
     }
 
     input[type="text"],
@@ -75,13 +73,13 @@ export class EmployeeForm extends LitElement {
     select {
       width: 100%;
       padding: 12px 16px;
-      border: 1px solid #d1d5db;
+      border: 1px solid var(--border-color);
       border-radius: 4px;
       font-size: 16px;
       font-family: var(--font-family);
       transition: all 0.2s ease;
-      background-color: #fff;
-      color: var(--text-color);
+      background-color: var(--white-color);
+      color: var(--primary-text-color);
       max-width: 100%;
       box-sizing: border-box;
     }
@@ -94,7 +92,7 @@ export class EmployeeForm extends LitElement {
     }
 
     .error {
-      color: #e53e3e;
+      color: var(--error-color);
       font-size: 13px;
       margin-top: 6px;
       display: block;
@@ -108,7 +106,7 @@ export class EmployeeForm extends LitElement {
       gap: 16px;
       margin-right: 8px;
       padding-top: 24px;
-      border-top: 1px solid #eee;
+      border-top: 1px solid var(--border-color);
     }
 
     button {
@@ -125,11 +123,11 @@ export class EmployeeForm extends LitElement {
 
     button[type="submit"] {
       background-color: var(--primary-color);
-      color: white;
+      color: var(--white-color);
     }
 
     button[type="submit"]:hover:not(:disabled) {
-      background-color: #e65c00;
+      background-color: var(--primary-color);
       text-decoration: none;
     }
 
@@ -139,13 +137,13 @@ export class EmployeeForm extends LitElement {
     }
 
     button[type="reset"] {
-      background-color: #f5f5f5;
-      color: var(--text-color);
-      border: 1px solid #d1d5db;
+      background-color: var(--secondary-color);
+      color: var(--primary-text-color);
+      border: 1px solid var(--border-color);
     }
 
     button[type="reset"]:hover {
-      background-color: #e8e8e8;
+      background-color: var(--button-color);
       text-decoration: none;
     }
 

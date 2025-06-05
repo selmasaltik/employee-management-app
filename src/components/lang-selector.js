@@ -14,7 +14,7 @@ export class LangSelector extends LitElement {
       gap: 8px;
       padding: 0;
       background: transparent;
-      border: 1px solid #e0e0e0;
+      border: 1px solid var(--border-color);
       border-radius: 4px;
       cursor: pointer;
       transition: all 0.2s ease;

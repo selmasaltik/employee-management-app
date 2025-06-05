@@ -30,7 +30,10 @@ export class ConfirmationModal extends LitElement {
   static styles = css`
     .modal-overlay {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0; 
+      left: 0; 
+      right: 0; 
+      bottom: 0;
       background-color: rgba(0, 0, 0, 0.5);
       display: flex;
       justify-content: center;
@@ -47,7 +50,7 @@ export class ConfirmationModal extends LitElement {
     }
 
     .modal {
-      background: white;
+      background: var(--white-color);
       border-radius: 8px;
       width: 90%;
       max-width: 500px;
@@ -63,7 +66,7 @@ export class ConfirmationModal extends LitElement {
 
     .modal-header {
       padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid #e5e7eb;
+      border-bottom: 1px solid var(--border-color);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -89,13 +92,13 @@ export class ConfirmationModal extends LitElement {
 
     .modal-body {
       padding: 24px;
-      color: #4b5563;
+      color: var(--modal-body-color);
       line-height: 1.5;
     }
 
     .modal-footer {
       padding: 16px 24px;
-      border-top: 1px solid #e5e7eb;
+      border-top: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
       justify-content: center;

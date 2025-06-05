@@ -26,8 +26,8 @@ export class HeaderBar extends LitElement {
   static styles = css`
     :host {
       display: block;
-      background-color: #fff;
-      box-shadow: 0 0 10px -2px #d9d9d9;
+      background-color: var(--white-color);
+      box-shadow: 0 0 10px -2px var(--light-color);
       position: sticky;
       top: 0;
       z-index: 1000;

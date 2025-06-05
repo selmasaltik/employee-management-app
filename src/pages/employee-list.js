@@ -104,13 +104,11 @@ export class EmployeeList extends LitElement {
       width: 100%;
       max-width: 1400px;
       margin: 0 auto;
-      box-sizing: border-box;
-      font-family: var(--font-family, Arial, sans-serif);
-      color: var(--text-color, #333);
+      color: var(--primary-text-color);
     }
 
     .list-container {
-      background: #fff;
+      background-color: var(--white-color);
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       overflow: hidden;
@@ -118,14 +116,14 @@ export class EmployeeList extends LitElement {
 
     header {
       padding: 24px 24px 8px;
-      border-bottom: 1px solid #eee;
-      background: #fff;
+      border-bottom: 1px solid var(--border-color);
+      background-color: var(--white-color);
     }
 
     header h2 {
       margin: 0;
       font-size: 28px;
-      color: var(--primary-color, #ff6600);
+      color: var(--primary-color);
       font-weight: 700;
     }
 
@@ -152,7 +150,7 @@ export class EmployeeList extends LitElement {
       width: 100%;
       padding: 12px 16px;
       font-size: 16px;
-      border: 1px solid #d1d5db;
+      border: 1px solid var(--border-color);
       border-radius: 4px;
       font-family: inherit;
       transition: all 0.2s;
@@ -160,7 +158,7 @@ export class EmployeeList extends LitElement {
 
     .search-container input[type="search"]:focus {
       outline: none;
-      border-color: var(--primary-color, #ff6600);
+      border-color: var(--primary-color);
       box-shadow: 0 0 0 2px rgba(255, 102, 0, 0.2);
     }
 
@@ -183,7 +181,7 @@ export class EmployeeList extends LitElement {
     }
 
     .view-toggle button[selected] {
-      background: #f5f5f5;
+      background: var(--secondary-color);
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
@@ -207,13 +205,13 @@ export class EmployeeList extends LitElement {
     th, td {
       padding: 16px;
       text-align: left;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid var(--border-color);
       font-size: 15px;
       white-space: nowrap;
     }
 
     th {
-      background-color: #fff;
+      background-color: var(--white-color);
       color: var(--primary-color);
       font-weight: 600;
       font-size: 13px;
@@ -225,7 +223,7 @@ export class EmployeeList extends LitElement {
     }
 
     tbody tr:hover {
-      background-color: #f9fafb;
+      background-color: var(--secondary-color);
     }
 
     .list-view {
@@ -233,8 +231,8 @@ export class EmployeeList extends LitElement {
     }
 
     .list-item {
-      background: #fff;
-      border: 1px solid #eee;
+      background-color: var(--white-color);
+      border: 1px solid var(--border-color);
       border-radius: 6px;
       padding: 20px;
       margin-bottom: 16px;
@@ -242,7 +240,7 @@ export class EmployeeList extends LitElement {
     }
 
     .list-item:hover {
-      border-color: var(--primary-color, #ff6600);
+      border-color: var(--primary-color);
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
@@ -287,36 +285,45 @@ export class EmployeeList extends LitElement {
     .empty-state {
       padding: 48px 16px;
       text-align: center;
-      color: #6b7280;
+      color: var(--bg-color);
     }
 
     .empty-state p {
       margin: 8px 0 0;
-      color: #9ca3af;
+      color: var(--secondary-text-color);
     }
 
     th.sortable {
       cursor: pointer;
       user-select: none;
       position: relative;
-      padding-right: 24px;
     }
 
     th.sortable:hover {
-      background-color: #f5f5f5;
+      background-color: var(--secondary-color);
     }
 
     .sort-icon {
-      position: absolute;
-      right: 8px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 12px;
-      color: #666;
+      margin-left: 4px;
+      display: inline-flex;
+      align-items: center;
+      height: 12px;
     }
 
-    th.sorted {
-      color: var(--primary-color);
+    .sort-arrow {
+      width: 12px;
+      height: 12px;
+      object-fit: contain;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    
+    th.sortable:hover .sort-arrow {
+      opacity: 1;
+    }
+    
+    th.sorted .sort-arrow {
+      opacity: 1;
     }
 
     .pagination {
@@ -593,8 +600,21 @@ export class EmployeeList extends LitElement {
                   ${column.sortable ? html`
                     <span class="sort-icon">
                       ${this.sortField === column.key 
-                        ? this.sortDirection === SORT_DIRECTION.ASC ? '↑' : '↓'
-                        : '↕'}
+                        ? html`
+                            <img 
+                              src="dist/assets/sort-${this.sortDirection === SORT_DIRECTION.ASC ? 'asc' : 'desc'}-arrow.png" 
+                              alt="${this.sortDirection === SORT_DIRECTION.ASC ? 'Sort ascending' : 'Sort descending'}"
+                              class="sort-arrow"
+                            />
+                          `
+                        : html`
+                            <img 
+                              src="dist/assets/double-sort-arrow.png" 
+                              alt="Sort"
+                              class="sort-arrow"
+                            />
+                          `
+                      }
                     </span>
                   ` : ''}
                 </th>
