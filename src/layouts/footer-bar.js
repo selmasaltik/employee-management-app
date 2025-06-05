@@ -1,9 +1,14 @@
 import { LitElement, html, css } from 'lit';
-import { msg } from '../localization.js';
+import { msg as defaultMsg } from '../localization.js';
 
 export class FooterBar extends LitElement {
+  static properties = {
+    msg: { type: Function }
+  };
+
   constructor() {
     super();
+    this.msg = defaultMsg;
     this._onLocaleChanged = this._onLocaleChanged.bind(this);
   }
 
@@ -38,7 +43,7 @@ export class FooterBar extends LitElement {
 
   render() {
     return html`
-      <footer>&copy; ${new Date().getFullYear()} ${msg('Employee Management App. All rights reserved.')}</footer>
+      <footer>&copy; ${new Date().getFullYear()} ${this.msg('Employee Management App. All rights reserved.')}</footer>
     `;
   }
 }

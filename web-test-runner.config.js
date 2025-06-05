@@ -91,12 +91,26 @@ export default {
   nodeResolve: {exportConditions: mode === 'dev' ? ['development'] : []},
   preserveSymlinks: true,
   browsers: commandLineBrowsers ?? Object.values(browsers),
+  browserStartTimeout: 30000, 
+  testsStartTimeout: 20000, 
+  testsFinishTimeout: 60000,
   testFramework: {
-    // https://mochajs.org/api/mocha
     config: {
-      ui: 'tdd',
-      timeout: '60000',
+      timeout: '1000',
+      ui: 'bdd',
     },
+  },
+  // Enable test coverage
+  coverage: true,
+  coverageConfig: {
+    report: true,
+    reportDir: 'coverage',
+    threshold: {
+      statements: 0,
+      branches: 0,
+      functions: 0,
+      lines: 0
+    }
   },
   plugins: [
     // Detect browsers without modules (e.g. IE11) and transform to SystemJS

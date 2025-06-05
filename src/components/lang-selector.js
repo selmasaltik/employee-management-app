@@ -83,7 +83,7 @@ export class LangSelector extends LitElement {
         <img
           class="flag"
           src=${flagSrc}
-          alt=""
+          alt=${languageName}
           aria-hidden="true"
         />
         ${this.isLoading ? html`<span>${msg('Loading...')}</span>` : ''}

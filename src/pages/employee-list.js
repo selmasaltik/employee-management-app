@@ -44,11 +44,6 @@ export class EmployeeList extends LitElement {
     this._updateTableColumns();
   }
 
-  firstUpdated() {
-    const modal = this.renderRoot.querySelector('confirmation-modal');
-    console.log('Confirmation modal element:', modal);
-  }
-
   connectedCallback() {
     super.connectedCallback();
     this.loadEmployees();

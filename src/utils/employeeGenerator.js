@@ -1,5 +1,3 @@
-import { msg } from '../localization.js';
-
 const firstNames = [
   'James', 'Mary', 'John', 'Patricia', 'Robert', 'Jennifer', 'Michael', 'Linda',
   'William', 'Elizabeth', 'David', 'Barbara', 'Richard', 'Susan', 'Joseph', 'Jessica',
@@ -18,11 +16,11 @@ const lastNames = [
 const departments = ['Analytics', 'Tech']
 const positions = ['Junior', 'Medior', 'Senior']
 
-function randomDate(start, end) {
+export function randomDate(start, end) {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 }
 
-function generatePhoneNumber() {
+export function generatePhoneNumber() {
   const getRandomDigit = () => Math.floor(Math.random() * 10);
   const getRandomBlock = (length) =>
     Array.from({ length }, getRandomDigit).join('');

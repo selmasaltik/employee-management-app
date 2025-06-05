@@ -22,6 +22,8 @@
     "test:watch": "wtr --watch",
     "test:prod": "MODE=prod wtr",
     "test:prod:watch": "MODE=prod wtr --watch",
+    "test:coverage": "wtr --coverage",
+    "test:ci": "npm run test:prod -- --browsers chromium --coverage",
     "checksize": "rollup -c ; cat dist/main.js | gzip -9 | wc -c ; rm dist/main.js"
   },
   "keywords": [
@@ -51,12 +53,14 @@
     "@web/dev-server": "^0.4.6",
     "@web/dev-server-legacy": "^1.0.0",
     "@web/test-runner": "^0.20.2",
+    "@web/test-runner-coverage-v8": "^0.8.0",
     "@web/test-runner-playwright": "^0.11.0",
     "@webcomponents/webcomponentsjs": "^2.8.0",
     "eslint": "^8.15.0",
     "prettier": "^2.6.2",
     "rollup": "^4.18.0",
     "rollup-plugin-copy": "^3.5.0",
-    "rollup-plugin-summary": "^2.0.1"
+    "rollup-plugin-summary": "^2.0.1",
+    "sinon": "^20.0.0"
   }
 }
