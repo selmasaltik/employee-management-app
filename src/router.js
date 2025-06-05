@@ -14,19 +14,12 @@ export function initRouter(outlet) {
       useHash: false
     });
 
-    const clearOutlet = () => {
-      while (outlet.firstChild) {
-        outlet.removeChild(outlet.firstChild);
-      }
-    };
-
     router.setRoutes([
       { 
         path: '/', 
         component: 'employee-list',
         action: async () => {
           if (currentRoute !== '/') {
-            clearOutlet();
             currentRoute = '/';
             document.title = 'Employee Management | Home';
           }
@@ -37,7 +30,6 @@ export function initRouter(outlet) {
         component: 'employee-list',
         action: async () => {
           if (currentRoute !== '/employees') {
-            clearOutlet();
             currentRoute = '/employees';
             document.title = 'Employee Management | Employees';
           }
@@ -47,27 +39,24 @@ export function initRouter(outlet) {
         path: '/employees/add', 
         component: 'employee-form',
         action: async () => {
-          clearOutlet();
-          currentRoute = '/employees/add';
-          document.title = 'Employee Management | Add Employee';
+          if (currentRoute !== '/employees/add') {
+            currentRoute = '/employees/add';
+            document.title = 'Employee Management | Add Employee';
+          }
         }
       },
       { 
         path: '/employees/edit/:id', 
         component: 'employee-form',
         action: async (context) => {
-          clearOutlet();
-          currentRoute = `/employees/edit/${context.params.id}`;
-          document.title = 'Employee Management | Edit Employee';
+          const newRoute = `/employees/edit/${context.params.id}`;
+          if (currentRoute !== newRoute) {
+            currentRoute = newRoute;
+            document.title = 'Employee Management | Edit Employee';
+          }
         }
       },
-      { 
-        path: '(.*)', 
-        action: () => {
-          clearOutlet();
-          router.navigate('/');
-        }
-      }
+      { path: '(.*)', redirect: '/' }
     ]);
     
     window.addEventListener('popstate', () => {
